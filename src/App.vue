@@ -12,8 +12,13 @@
 
     <ol>
       <li v-for="(task, index) in tasks" :key="index">
-        {{task}}
-        <button class="btn btn-danger" @click="removeTask(index)">Delete</button>
+        <div class="d-flex">
+          <form @submit.prevent="transformToText(index)">
+            <span @click="makeEditable(index)" v-if="!editStatus[index]">{{ task }}</span>
+            <input v-if="editStatus[index]" type="text" v-model="tasks[index]">
+          </form>
+          <button class="btn btn-danger" @click="removeTask(index)">Delete</button>
+        </div>
       </li>
     </ol>
   </div>
@@ -28,19 +33,27 @@ export default {
   data() {
     return {
       newTask: '',
-      tasks: []
+      tasks: [],
+      editStatus: []
     }
   },
   methods: {
     addTask() {
       if (this.newTask.trim() !== '') {
         this.tasks.push(this.newTask);
+        this.editStatus.push(false)
         this.newTask = '';
       }
     },
     removeTask(index) {
       this.$delete(this.tasks, index);
-      // this.tasks.splice(index, 1);
+      this.editStatus.splice(index, 1);
+    },
+    makeEditable(index) {
+      this.$set(this.editStatus, index, true);
+    },
+    transformToText(index) {
+      this.$set(this.editStatus, index, false)
     },
   },
 }
