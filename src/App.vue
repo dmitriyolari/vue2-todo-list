@@ -1,28 +1,51 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>To-Do List</h1>
+    <form @submit.prevent="addTask">
+      <input
+          type="text"
+          v-model="newTask"
+          placeholder="Add new task"
+      />
+      <button class="btn btn-info">Add task</button>
+    </form>
+
+    <ol>
+      <li v-for="(task, index) in tasks" :key="index">
+        {{task}}
+        <button class="btn btn-danger" @click="removeTask(index)">Delete</button>
+      </li>
+    </ol>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+  data() {
+    return {
+      newTask: '',
+      tasks: []
+    }
+  },
+  methods: {
+    addTask() {
+      if (this.newTask.trim() !== '') {
+        this.tasks.push(this.newTask);
+        this.newTask = '';
+      }
+    },
+    removeTask(index) {
+      this.$delete(this.tasks, index);
+      // this.tasks.splice(index, 1);
+    },
+  },
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
