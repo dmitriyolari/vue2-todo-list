@@ -12,10 +12,15 @@
 
     <ol>
       <li v-for="(task, index) in tasks" :key="index">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
+          <input type="checkbox" v-model="task.done">
           <form @submit.prevent="transformToText(index)">
-            <span @click="makeEditable(index)" v-if="!editStatus[index]">{{ task }}</span>
-            <input v-if="editStatus[index]" type="text" v-model="tasks[index]">
+            <span
+                @click="makeEditable(index)"
+                v-if="!editStatus[index]"
+                :class="{'text-muted': task.done, 'text-decoration-line-through': task.done}"
+            >{{ task.text }}</span>
+            <input v-if="editStatus[index]" type="text" v-model="tasks[index].text">
           </form>
           <button class="btn btn-danger" @click="removeTask(index)">Delete</button>
         </div>
@@ -40,7 +45,10 @@ export default {
   methods: {
     addTask() {
       if (this.newTask.trim() !== '') {
-        this.tasks.push(this.newTask);
+        this.tasks.push({
+          text: this.newTask,
+          done: false
+        });
         this.editStatus.push(false)
         this.newTask = '';
       }
@@ -56,6 +64,27 @@ export default {
       this.$set(this.editStatus, index, false)
     },
   },
+  watch: {
+    tasks: {
+      handler(newTasks) {
+        localStorage.setItem('tasks', JSON.stringify(newTasks))
+        localStorage.setItem('editStatus', JSON.stringify(newTasks))
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    const savedTasks = localStorage.getItem('tasks');
+    const savedStatus = localStorage.getItem('editStatus');
+
+    if (savedTasks) {
+      this.tasks = JSON.parse(savedTasks)
+    }
+
+    if (savedStatus) {
+      this.editStatus = JSON.parse(savedStatus)
+    }
+  }
 }
 </script>
 
