@@ -26,6 +26,8 @@
         </div>
       </li>
     </ol>
+    <button v-if="tasks.length !== 0" class="btn btn-danger" @click="removeAllTasks()">Delete All</button>
+
   </div>
 </template>
 
@@ -62,6 +64,10 @@ export default {
     },
     transformToText(index) {
       this.$set(this.editStatus, index, false)
+    },
+    removeAllTasks() {
+      this.tasks = [];
+      this.editStatus = [];
     },
   },
   watch: {
