@@ -10,8 +10,13 @@
       <button class="btn btn-info">Add task</button>
     </form>
 
+    <div>
+      <button class="btn btn-secondary mr-2" @click="filter='all'">All</button>
+      <button class="btn btn-primary mr-2" @click="filter='active'">Active</button>
+      <button class="btn btn-success" @click="filter='completed'">Completed</button>
+    </div>
     <ol>
-      <li v-for="(task, index) in tasks" :key="index">
+      <li v-for="(task, index) in filteredTasks" :key="index">
         <div class="d-flex align-items-center">
           <input type="checkbox" v-model="task.done">
           <form @submit.prevent="transformToText(index)">
@@ -41,7 +46,8 @@ export default {
     return {
       newTask: '',
       tasks: [],
-      editStatus: []
+      editStatus: [],
+      filter: 'all'
     }
   },
   methods: {
@@ -69,6 +75,16 @@ export default {
       this.tasks = [];
       this.editStatus = [];
     },
+  },
+  computed: {
+    filteredTasks() {
+      if (this.filter === 'active') {
+        return this.tasks.filter(task => !task.done)
+      } else if (this.filter === 'completed') {
+        return this.tasks.filter(task => task.done)
+      }
+      return this.tasks;
+    }
   },
   watch: {
     tasks: {
